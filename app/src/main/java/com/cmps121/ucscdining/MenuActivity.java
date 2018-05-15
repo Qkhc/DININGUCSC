@@ -1,10 +1,13 @@
 package com.cmps121.ucscdining;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.view.View;
 
@@ -22,44 +25,88 @@ import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 
 public class MenuActivity  extends AppCompatActivity {
 
-    ArrayList<String> aList = new ArrayList<String>();
+    String URL = "";
+
     private final String TAG = "TAG";
+
+
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_activity);
 
+        // pull extra
+        // Take DH link and set that = URL
+        // Use URL for next bit of code with "connect"
+        Intent i = getIntent();
+        int x = 0;
+        int DH = i.getIntExtra("DH", x);
+
+        switch (DH) {
+            case (0):
+                URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=40&locationName=Colleges+Nine+%26+Ten+Dining+Hall&sName=&naFlag=";
+                break;
+
+            case (1):
+                URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=05&locationName=Cowell+Stevenson+Dining+Hall&sName=&naFlag=";
+                break;
+
+            case(2):
+                URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=20&locationName=Crown+Merrill+Dining+Hall&sName=&naFlag=";
+                break;
+
+            case(3):
+                URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=25&locationName=Porter+Kresge+Dining+Hall&sName=&naFlag=" ;
+                break;
+
+            case(4):
+                URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=30&locationName=Rachel+Carson+Oakes+Dining+Hall&sName=&naFlag=";
+                break;
+
+        }
 
 
 
-        new  AsyncTask<Void, Void, String>() {
+
+
+
+        //AsyncTask Required to do HTML parsing
+         new AsyncTask<Void, Void, ArrayList<String>>() {
+
             @Override
-            protected String doInBackground(Void... voids) {
+            protected ArrayList<String> doInBackground(Void... voids) {
+
+                ArrayList<String> aList = new ArrayList<String>();
                 String title = "";
+
+                // Gets HTML from dining hall website and adds relevant information to an array list.
                 try {
-                    Document document = Jsoup.connect("http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=20&locationName=Crown+Merrill+Dining+Hall&sName=&naFlag=").get();
-                    while(document.select("div").hasText()){
 
-                        if(!(document.select("div").first().text().equals("")))
+                    Document document = Jsoup.connect(URL).get();
+
+                    // While there is text in the "div" querey we add to our array list
+                    while (document.select("div").hasText()) {
+
+                        // If the specific item is NOT blank/empty add to our array list.
+                        if (!(document.select("div").first().text().equals("")))
                             aList.add(document.select("div").first().text());
-                        document.select("div").first().remove();
+                        document.select("div").first().remove(); // Delete This item regardless
                     }
-
-
 
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                title = aList.get(5);
-                return title;
+                return aList;
             }
 
             @Override
-            protected void onPostExecute(String result) {
+            protected void onPostExecute(ArrayList result) {
 
-                TextView text = (TextView)findViewById(R.id.textView);
-                text.setText(result);
+                ListView list = findViewById(R.id.menuItems);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MenuActivity.this, android.R.layout.simple_list_item_1, result);
+                list.setAdapter(adapter);
             }
         }.execute();
     }
