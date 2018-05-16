@@ -3,25 +3,22 @@ package com.cmps121.ucscdining;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.view.View;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.w3c.dom.Text;
+
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 
 public class MenuActivity  extends AppCompatActivity {
 
@@ -36,6 +33,10 @@ public class MenuActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_activity);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("");
+
+
         // pull extra
         // Take DH link and set that = URL
         // Use URL for next bit of code with "connect"
@@ -46,22 +47,27 @@ public class MenuActivity  extends AppCompatActivity {
         switch (DH) {
             case (0):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=40&locationName=Colleges+Nine+%26+Ten+Dining+Hall&sName=&naFlag=";
+                actionBar.setTitle("College Nine and Ten");
                 break;
 
             case (1):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=05&locationName=Cowell+Stevenson+Dining+Hall&sName=&naFlag=";
+                actionBar.setTitle("Cowell and Stevenson");
                 break;
 
             case(2):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=20&locationName=Crown+Merrill+Dining+Hall&sName=&naFlag=";
+                actionBar.setTitle("Crown and Merrill");
                 break;
 
             case(3):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=25&locationName=Porter+Kresge+Dining+Hall&sName=&naFlag=" ;
+                actionBar.setTitle("Porter and Kresge");
                 break;
 
             case(4):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=30&locationName=Rachel+Carson+Oakes+Dining+Hall&sName=&naFlag=";
+                actionBar.setTitle("Carson and Oakes");
                 break;
 
         }

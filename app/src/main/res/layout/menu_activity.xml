@@ -6,17 +6,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.design.widget.BottomNavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        app:itemBackground="@color/colorPrimaryDark"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:menu="@menu/my_navigation_items" />
+
+
+
+
+
     <ListView
         android:id="@+id/menuItems"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
-
     </ListView>
+
     <TextView
         android:id="@+id/item"
         android:text=""
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textSize="20dp"/>
+
 
 </android.support.constraint.ConstraintLayout>
