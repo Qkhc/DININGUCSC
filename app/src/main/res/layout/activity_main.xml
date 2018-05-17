@@ -9,7 +9,9 @@
     <ListView
         android:id="@+id/listOfDH"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:divider="@color/white">
+
 
     </ListView>
     <TextView
@@ -17,6 +19,6 @@
         android:text=""
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="20dp"/>
+        android:textSize="50dp"/>
 
 </android.support.constraint.ConstraintLayout>
