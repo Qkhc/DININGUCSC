@@ -9,4 +9,7 @@
     <item android:id="@+id/dinner_navigation"
         android:title="Dinner"
         android:icon="@drawable/dinner" />
+    <item android:id="@+id/lateNight_navigation"
+        android:title="Late Night"
+        android:icon="@drawable/late_night" />
 </menu>
