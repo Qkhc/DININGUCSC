@@ -1,20 +1,16 @@
 package com.cmps121.ucscdining;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -35,7 +31,6 @@ public class MenuActivity  extends AppCompatActivity {
 
     String URL = "";
 
-    private final String TAG = "TAG";
     ActionBar actionBar;
     ArrayList<String> aList;
     List<String> breakfastMenu;
@@ -52,8 +47,6 @@ public class MenuActivity  extends AppCompatActivity {
         setContentView(R.layout.menu_activity);
 
         actionBar = getSupportActionBar();
-        actionBar.setTitle("");
-
 
         // pull extra
         // Take DH link and set that = URL
@@ -62,9 +55,9 @@ public class MenuActivity  extends AppCompatActivity {
         int x = 0;
         final int DH = i.getIntExtra("DH", x);
 
-        BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        View item =  findViewById(R.id.lateNight_navigation);
 
+        // Switch statement selects the appropriate dining hall menu to pull data from
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
         switch (DH) {
             case (0):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=40&locationName=Colleges+Nine+%26+Ten+Dining+Hall&sName=&naFlag=";
@@ -79,13 +72,13 @@ public class MenuActivity  extends AppCompatActivity {
             case(2):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=20&locationName=Crown+Merrill+Dining+Hall&sName=&naFlag=";
                 actionBar.setTitle("Crown and Merrill");
-                bottomNav.getMenu().removeItem(R.id.lateNight_navigation);
+                bottomNav.getMenu().removeItem(R.id.lateNight_navigation); // Removes late night button from nav bar
                 break;
 
             case(3):
                 URL = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=25&locationName=Porter+Kresge+Dining+Hall&sName=&naFlag=" ;
                 actionBar.setTitle("Porter and Kresge");
-                bottomNav.getMenu().removeItem(R.id.lateNight_navigation);
+                bottomNav.getMenu().removeItem(R.id.lateNight_navigation); // Removes late night button from nav bar
                 break;
 
             case(4):
@@ -95,16 +88,13 @@ public class MenuActivity  extends AppCompatActivity {
 
         }
 
+        // This section sets the subtitle of the action bar to say "Menu for current date"
         Date c = Calendar.getInstance().getTime();
 
         SimpleDateFormat df = new SimpleDateFormat("EEEE, MMM dd, yyyy");
         String formattedDate = df.format(c);
 
         actionBar.setSubtitle("Menu for " + formattedDate);
-
-
-
-
 
 
 
@@ -134,27 +124,33 @@ public class MenuActivity  extends AppCompatActivity {
                         document.select("div").first().remove(); // Delete This item regardless
                     }
 
+
+                    // Create a sublist for every section of the DH menu, i.e breakfast lunch and dinner
                     int temp = 0;
                     for(int i = 0; i < aList.size(); i++){
 
+                        // If we get to lunch everything before that is breakfast
                         if(aList.get(i).equals("Lunch")){
 
                             breakfastMenu = aList.subList(2,i);
                             temp = i;
 
                         }
+                        // if we get to Dinner everything before that is lunch
                         else if(aList.get(i).equals("Dinner")){
 
                             lunchMenu = aList.subList(temp + 1, i);
                             temp = i;
 
                         }
+                        // If we get to Late night or the end then we have a dinner menu
                         else if((aList.get(i).equals("Late Night") || aList.get(i).contains("nutrient composition") && (DH == 3 || DH == 2))){
 
                             dinnerMenu = aList.subList(temp + 1, i);
                             temp = i;
 
                         }
+                        // If we get to the end then we have a late night menu
                         else if(aList.get(i).contains("Powered by") && (DH == 0 || DH == 1 || DH == 4) ){
 
                             lateNightMenu = aList.subList(temp + 1, i-1);
@@ -168,6 +164,7 @@ public class MenuActivity  extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                // Show breakfast menu by default.
                 return breakfastMenu;
             }
 
@@ -192,6 +189,8 @@ public class MenuActivity  extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         List selectedMenu = null;
+
+                        // Switch statement for item clicked, displays correct menu
                         switch (item.getItemId()) {
                             case R.id.breakfast_navigation:
                                 selectedMenu = breakfastMenu;
@@ -214,5 +213,40 @@ public class MenuActivity  extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
+
+    // This method will just show the menu item (which is our button "ADD")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        // the menu being referenced here is the menu.xml from res/menu/menu.xml
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    /* Here is the event handler for the menu button that I forgot in class.
+    The value returned by item.getItemID() is
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //Log.d(TAG, String.format("" + item.getItemId()));
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_favorite:
+                /*the R.id.action_favorite is the ID of our button (defined in strings.xml).
+                Change Activity here (if that's what you're intending to do, which is probably is).
+                 */
+                Intent i = new Intent(this, InfoActivity.class);
+                Intent j = getIntent();
+                int x = 0;
+                int dh = j.getIntExtra("DH", x);
+                i.putExtra("DH", dh);
+                startActivity(i);
+            default:
+                super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 }

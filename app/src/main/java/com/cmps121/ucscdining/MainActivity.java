@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         ListView list = findViewById(R.id.listOfDH);
-        TextView text = findViewById(R.id.text);
-
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, diningHalls);
         list.setAdapter(adapter);
 
@@ -46,14 +44,13 @@ public class MainActivity extends AppCompatActivity {
                 // to transition into the new Activity.
                 Intent detailIntent = new Intent(context, MenuActivity.class);
 
-//                switch statement for position of DH determines which URL will be sent
-//                pass some key value pairs to the next Activity (via the Intent)
                 detailIntent.putExtra("DH", position);
-//                detailIntent.putExtra("Dining Hall", dining hall URL );
-//
                 startActivity(detailIntent);
             }
         });
+
+
+
 
 
 
