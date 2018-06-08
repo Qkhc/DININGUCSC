@@ -22,7 +22,6 @@ import org.jsoup.nodes.Document;
 
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -121,13 +120,9 @@ public class MenuActivity  extends AppCompatActivity {
 
                     Document document = Jsoup.connect(URL).get();
 
+                    // Gets all links from URL allows us to get nutritional information
                     links = document.select("a[href]");
 
-                    for (Element link : links) {
-
-                        System.out.println("link : " + link.attr("href"));
-                        System.out.println("text : " + link.text());
-                    }
 
                     // While there is text in the "div" querey we add to our array list
                     while (document.select("div").hasText()) {
@@ -235,6 +230,8 @@ public class MenuActivity  extends AppCompatActivity {
                     }
                 });
 
+
+
          ListView list = findViewById(R.id.menuItems);
          final Context context = this;
          list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -257,7 +254,7 @@ public class MenuActivity  extends AppCompatActivity {
 
     }
 
-    // This method will just show the menu item (which is our button "ADD")
+    // This method will just show the menu item
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -268,9 +265,7 @@ public class MenuActivity  extends AppCompatActivity {
 
     }
 
-    /* Here is the event handler for the menu button that I forgot in class.
-    The value returned by item.getItemID() is
-     */
+    // Here is the event handler for the menu button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //Log.d(TAG, String.format("" + item.getItemId()));

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -48,12 +47,13 @@ public class nutritionActivity extends AppCompatActivity {
             protected ArrayList<String> doInBackground(Void... voids) {
 
                 ArrayList<String> aList = new ArrayList<String>();
-                String title = "";
 
                 // Gets HTML from dining hall website and adds relevant information to an array list.
                 try {
+
                     Document document = Jsoup.connect(link).get();
 
+                    // Gets links from our document, which is used to go to another link for the nutritional info of the specified items
                     links = document.select("a[href]");
                     URL = "http://nutrition.sa.ucsc.edu/" + links.get(position).attr("href");
 
