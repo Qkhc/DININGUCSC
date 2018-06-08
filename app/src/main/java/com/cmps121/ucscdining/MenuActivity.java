@@ -1,6 +1,7 @@
 package com.cmps121.ucscdining;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -19,6 +22,8 @@ import org.jsoup.nodes.Document;
 
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,6 +35,8 @@ import java.util.List;
 public class MenuActivity  extends AppCompatActivity {
 
     String URL = "";
+    String nutritionLink = "http://nutrition.sa.ucsc.edu/";
+    Elements links;
 
     ActionBar actionBar;
     ArrayList<String> aList;
@@ -37,6 +44,8 @@ public class MenuActivity  extends AppCompatActivity {
     List<String> lunchMenu;
     List<String> dinnerMenu;
     List<String> lateNightMenu;
+
+    List selectedMenu = null;
 
 
 
@@ -112,6 +121,14 @@ public class MenuActivity  extends AppCompatActivity {
 
                     Document document = Jsoup.connect(URL).get();
 
+                    links = document.select("a[href]");
+
+                    for (Element link : links) {
+
+                        System.out.println("link : " + link.attr("href"));
+                        System.out.println("text : " + link.text());
+                    }
+
                     // While there is text in the "div" querey we add to our array list
                     while (document.select("div").hasText()) {
 
@@ -159,6 +176,7 @@ public class MenuActivity  extends AppCompatActivity {
 
                     }
 
+                    nutritionLink = "http://nutrition.sa.ucsc.edu/" + (links.get(0)).attr("href");
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -188,21 +206,24 @@ public class MenuActivity  extends AppCompatActivity {
                 (new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        List selectedMenu = null;
 
                         // Switch statement for item clicked, displays correct menu
                         switch (item.getItemId()) {
                             case R.id.breakfast_navigation:
                                 selectedMenu = breakfastMenu;
+                                nutritionLink = "http://nutrition.sa.ucsc.edu/" + (links.get(0)).attr("href");
                                 break;
                             case R.id.lunch_navigation:
                                 selectedMenu = lunchMenu;
+                                nutritionLink = "http://nutrition.sa.ucsc.edu/" + (links.get(1)).attr("href");
                                 break;
                             case R.id.dinner_navigation:
                                 selectedMenu = dinnerMenu;
+                                nutritionLink = "http://nutrition.sa.ucsc.edu/" + (links.get(2)).attr("href");
                                 break;
                             case R.id.lateNight_navigation:
                                 selectedMenu = lateNightMenu;
+                                nutritionLink = "http://nutrition.sa.ucsc.edu/" + (links.get(3)).attr("href");
                                 break;
                         }
 
@@ -213,6 +234,27 @@ public class MenuActivity  extends AppCompatActivity {
                         return true;
                     }
                 });
+
+         ListView list = findViewById(R.id.menuItems);
+         final Context context = this;
+         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // Create an Intent to reference our new activity, then call startActivity
+                // to transition into the new Activity.
+                Intent detailIntent = new Intent(context, nutritionActivity.class);
+
+                detailIntent.putExtra("Nutrition Link", nutritionLink);
+                detailIntent.putExtra("Food Item", position);
+
+                System.out.println(nutritionLink);
+
+                startActivity(detailIntent);
+            }
+        });
+
     }
 
     // This method will just show the menu item (which is our button "ADD")

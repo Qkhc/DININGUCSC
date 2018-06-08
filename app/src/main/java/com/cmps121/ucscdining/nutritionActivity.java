@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 public class nutritionActivity extends AppCompatActivity {
 
     String URL = "";
+    Elements links;
 
     String menu,serving,cal,cal_fat,total_fat,sat_fat,sat_fat_percent, tran_fat, chol, chol_percent
             ,sodium,sodium_percent, total_car,total_car_percent,fiber,fiber_percent,sugar,protein,vit_a,vit_b12,vit_c
@@ -35,11 +37,8 @@ public class nutritionActivity extends AppCompatActivity {
         // Use URL for next bit of code with "connect"
         Intent i = getIntent();
         int x = 0;
-        int DH = i.getIntExtra("DH", x);
-
-        // HardCode   URL for now
-        URL = "http://nutrition.sa.ucsc.edu/label.asp?locationNum=40&locationName=Colleges+Nine+%26+Ten+Dining+Hall&dtdate=05%2F16%2F2018&RecNumAndPort=700071%2A4";
-
+        final int position = i.getIntExtra("Food Item",x);
+        final String link = i.getStringExtra("Nutrition Link");
 
 
         //AsyncTask Required to do HTML parsing
@@ -53,6 +52,10 @@ public class nutritionActivity extends AppCompatActivity {
 
                 // Gets HTML from dining hall website and adds relevant information to an array list.
                 try {
+                    Document document = Jsoup.connect(link).get();
+
+                    links = document.select("a[href]");
+                    URL = "http://nutrition.sa.ucsc.edu/" + links.get(position).attr("href");
 
                     Document page = Jsoup.connect(URL).get();
                     Elements fonts = page.select("font");
@@ -86,6 +89,9 @@ public class nutritionActivity extends AppCompatActivity {
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+                catch (RuntimeException r){
+
                 }
                 return aList;
             }
