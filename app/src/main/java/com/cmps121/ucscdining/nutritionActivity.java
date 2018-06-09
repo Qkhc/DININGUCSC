@@ -1,11 +1,19 @@
 package com.cmps121.ucscdining;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.hsalf.smilerating.BaseRating;
+import com.hsalf.smilerating.SmileRating;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,7 +31,7 @@ public class nutritionActivity extends AppCompatActivity {
             ,sodium,sodium_percent, total_car,total_car_percent,fiber,fiber_percent,sugar,protein,vit_a,vit_b12,vit_c
             ,iron,ingredient, allergen;
     private final String TAG = "TAG";
-
+    int level2 = 0;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -38,7 +46,6 @@ public class nutritionActivity extends AppCompatActivity {
         int x = 0;
         final int position = i.getIntExtra("Food Item",x);
         final String link = i.getStringExtra("Nutrition Link");
-
 
         //AsyncTask Required to do HTML parsing
         new AsyncTask<Void, Void, ArrayList<String>>() {
@@ -184,5 +191,70 @@ public class nutritionActivity extends AppCompatActivity {
 
             }
         }.execute();
+
+        final SmileRating smileRating = (SmileRating) findViewById(R.id.smile_rating);
+        smileRating.setOnSmileySelectionListener(new SmileRating.OnSmileySelectionListener() {
+            @Override
+            public void onSmileySelected(int smiley, boolean reselected) {
+                switch (smiley) {
+                    case SmileRating.BAD:
+                        Log.i(TAG, "Bad");
+                        break;
+                    case SmileRating.GOOD:
+                        Log.i(TAG, "Good");
+                        break;
+                    case SmileRating.GREAT:
+                        Log.i(TAG, "Great");
+                        break;
+                    case SmileRating.OKAY:
+                        Log.i(TAG, "Okay");
+                        break;
+                    case SmileRating.TERRIBLE:
+                        Log.i(TAG, "Terrible");
+                        break;
+                }
+                level2 = smiley;
+            }
+        });
+        smileRating.setOnRatingSelectedListener(new SmileRating.OnRatingSelectedListener() {
+            @Override
+            public void onRatingSelected(int level, boolean reselected) {
+                // level is from 1 to 5 (0 when none selected)
+                // reselected is false when user selects different smiley that previously selected one
+                // true when the same smiley is selected.
+                // Except if it first time, then the value will be false.
+                Toast.makeText(nutritionActivity.this, "Selected Rating " + level, Toast.LENGTH_SHORT).show();
+                level2 = level;
+            }
+        });
     }
+
+    public void onResume(){
+        super.onResume();
+
+        final SmileRating smileRating = (SmileRating) findViewById(R.id.smile_rating);
+        if (level2 == 1){
+            smileRating.setSelectedSmile(BaseRating.TERRIBLE);
+        }
+        else if (level2 == 2){
+            smileRating.setSelectedSmile(BaseRating.BAD);
+        }
+        else if (level2 == 3){
+            smileRating.setSelectedSmile(BaseRating.OKAY);
+        }
+        else if (level2 == 4){
+            smileRating.setSelectedSmile(BaseRating.GOOD);
+        }
+        else if (level2 == 5){
+            smileRating.setSelectedSmile(BaseRating.GREAT);
+        }
+        else
+        {
+            smileRating.setSelectedSmile(BaseRating.OKAY);
+        }
+
+
+    }
+
+
 }
