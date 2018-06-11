@@ -253,7 +253,6 @@ public class nutritionActivity extends AppCompatActivity {
             smileRating.setSelectedSmile(BaseRating.OKAY);
         }
 
-
     }
 
 
